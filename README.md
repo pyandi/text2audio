@@ -4,8 +4,8 @@
 ---
 
 ## 使用说明
-需要自行到 http://yuyin.baidu.com/app 创建应用，开通语音合成服务，并将 API key(TTS_AK) 和 Secret key(TTS_SK) 配置到脚本中或环境变量里
-查看帮助请执行 python text2audio.py --help
+> 需要自行到 http://yuyin.baidu.com/app 创建应用，开通语音合成服务，并将 API key(TTS_AK) 和 Secret key(TTS_SK) 配置到脚本中或环境变量里
+> 查看帮助请执行 python text2audio.py --help
 
 ## 依赖说明
 - click: 用于实现命令行调用
