@@ -4,22 +4,25 @@ import os
 import sys
 import click
 import requests
-TOKEN_URL = 'https://openapi.baidu.com/oauth/2.0/token?grant_type={0}&client_id={1}&client_secret={2}'
-TEXT2AUDIO_URL = 'http://tsn.baidu.com/text2audio?tex={0}&lan=zh&cuid={1}&ctp=1&tok={2}&spd={3}&pit={4}&vol={5}&per={6}'
+
+TOKEN_URL = 'https://openapi.baidu.com/oauth/2.0/token'
+TEXT2AUDIO_URL = 'http://tsn.baidu.com/text2audio'
+
 GRANT_TYPE = 'client_credentials'
-CUID = 'pyandi_ffff'
+CUID = 'liys87x'
+
 TTS_AK = ''
 TTS_SK = ''
+if 'TTS_AK' in os.environ:
+    TTS_AK = os.environ['TTS_AK']
+if 'TTS_SK' in os.environ:
+    TTS_SK = os.environ['TTS_SK']
 
 
 def get_token():
-    ak, sk = TTS_AK, TTS_SK
-    if 'TTS_AK' in os.environ:
-        ak = os.environ['TTS_AK']
-    if 'TTS_SK' in os.environ:
-        sk = os.environ['TTS_SK']
-    url = TOKEN_URL.format(GRANT_TYPE, ak, sk)
-    r = requests.post(url)
+    param = {"grant_type": GRANT_TYPE,
+             "client_id": TTS_AK, "client_secret": TTS_SK}
+    r = requests.post(TOKEN_URL, params=param)
     if r.status_code == 200:
         return r.json()['access_token']
     else:
@@ -27,14 +30,15 @@ def get_token():
         raise Exception('Get Token Error!')
 
 
-def text2audio(text, spd=5, pit=5, vol=5, per=2):
+def text2audio(text, spd=5, pit=5, vol=5, per=0):
     lst = []
     tok = get_token()
     while text:
-        _text, text = text[:1024], text[1024:]
-        url = TEXT2AUDIO_URL.format(_text, CUID, tok, spd, pit, vol, per)
-        r = requests.post(url)
-        if r.headers['Content-type'] == 'audio/mp3':
+        _text, text = text[:2048], text[2048:]
+        param = {"tex": _text, "tok": tok, "cuid": CUID, "ctp": "1",
+                 "lan": "zh", "spd": spd, "pit": pit, "vol": vol, "per": per}
+        r = requests.post(TEXT2AUDIO_URL, params=param)
+        if r.status_code == 200 and r.headers['Content-type'] == 'audio/mp3':
             lst.append(r.content)
         else:
             print(r.json())
@@ -51,7 +55,7 @@ def text2audio(text, spd=5, pit=5, vol=5, per=2):
 @click.option('--spd', default=5, help='The speed. [0-9]')
 @click.option('--pit', default=5, help='The pitch. [0-9]')
 @click.option('--vol', default=5, help='The volume. [0-9]')
-@click.option('--per', default=2, help='The person. [0,1,3,4]')
+@click.option('--per', default=0, help='The person. [0,1,3,4]')
 def run(text, from_file, result, speedch, speedch_app, spd, pit, vol, per):
     if text is None and from_file is None:
         raise Exception("Please give a option text or from_file!")
