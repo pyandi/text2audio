@@ -84,4 +84,4 @@ ENV/
 
 # Rope project settings
 .ropeproject
-.mp3
+*.mp3
