@@ -20,8 +20,11 @@ if 'TTS_SK' in os.environ:
 
 
 def get_token():
-    param = {"grant_type": GRANT_TYPE,
-             "client_id": TTS_AK, "client_secret": TTS_SK}
+    param = {
+        "grant_type": GRANT_TYPE,
+        "client_id": TTS_AK,
+        "client_secret": TTS_SK
+    }
     r = requests.post(TOKEN_URL, params=param)
     if r.status_code == 200:
         return r.json()['access_token']
@@ -35,8 +38,17 @@ def text2audio(text, spd=5, pit=5, vol=5, per=0):
     tok = get_token()
     while text:
         _text, text = text[:2048], text[2048:]
-        param = {"tex": _text, "tok": tok, "cuid": CUID, "ctp": "1",
-                 "lan": "zh", "spd": spd, "pit": pit, "vol": vol, "per": per}
+        param = {
+            "tex": _text,
+            "tok": tok,
+            "cuid": CUID,
+            "ctp": "1",
+            "lan": "zh",
+            "spd": spd,
+            "pit": pit,
+            "vol": vol,
+            "per": per
+        }
         r = requests.post(TEXT2AUDIO_URL, params=param)
         if r.status_code == 200 and r.headers['Content-type'] == 'audio/mp3':
             lst.append(r.content)
@@ -46,7 +58,15 @@ def text2audio(text, spd=5, pit=5, vol=5, per=0):
     return b''.join(lst)
 
 
-def run(text="", from_file="", result="/tmp/default.mp3", speedch=False, speedch_app="mpv", spd=5, pit=5, vol=5, per=0):
+def run(text="",
+        from_file="",
+        result="/tmp/default.mp3",
+        speedch=False,
+        speedch_app="mpv",
+        spd=5,
+        pit=5,
+        vol=5,
+        per=0):
     if text == "" and from_file == "":
         raise Exception("Please give a option text or from_file!")
     if text == "":
