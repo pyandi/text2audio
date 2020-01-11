@@ -2,7 +2,7 @@
 # encoding: utf-8
 import os
 import sys
-import click
+import fire
 import requests
 
 TOKEN_URL = 'https://openapi.baidu.com/oauth/2.0/token'
@@ -46,20 +46,10 @@ def text2audio(text, spd=5, pit=5, vol=5, per=0):
     return b''.join(lst)
 
 
-@click.command()
-@click.option('--text', '-t', help='The text from stdin.')
-@click.option('--from_file', '-f', help='The text from file.')
-@click.option('--result', '-r', default='default.mp3', help='The result file.')
-@click.option('--speedch/--no-speedch', default=False, help='Speedch or not.')
-@click.option('--speedch_app', default='mpv', help='Speedch app, e.g. "mpv".')
-@click.option('--spd', default=5, help='The speed. [0-9]')
-@click.option('--pit', default=5, help='The pitch. [0-9]')
-@click.option('--vol', default=5, help='The volume. [0-9]')
-@click.option('--per', default=0, help='The person. [0,1,3,4]')
-def run(text, from_file, result, speedch, speedch_app, spd, pit, vol, per):
-    if text is None and from_file is None:
+def run(text="", from_file="", result="/tmp/default.mp3", speedch=False, speedch_app="mpv", spd=5, pit=5, vol=5, per=0):
+    if text == "" and from_file == "":
         raise Exception("Please give a option text or from_file!")
-    if text is None:
+    if text == "":
         if not os.path.exists(from_file):
             raise Exception('The from file {0} not exists!'.format(from_file))
         text = open(from_file, 'r').read()
@@ -71,9 +61,4 @@ def run(text, from_file, result, speedch, speedch_app, spd, pit, vol, per):
 
 
 if __name__ == '__main__':
-    try:
-        run()
-    except Exception as ex:
-        print(ex)
-        raise
-        sys.exit(1)
+    fire.Fire(run)
