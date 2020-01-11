@@ -12,4 +12,7 @@
 ```shell
 # 一年期 12 万贷款，年利率 4.8%，等额本金方式，每月偿还明细
 python mortgage-payment-calculator/calculate.py --loan_amount 120000 --interest_rate 0.048 --years 1 --payment_type 'equal-principal-payment'
+
+# 一年期 12 万贷款，年利率 4.8%，等额本息方式，每月偿还明细
+python mortgage-payment-calculator/calculate.py --loan_amount 120000 --interest_rate 0.048 --years 1 --payment_type 'equal-loan-payment'
 ```
